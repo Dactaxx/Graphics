@@ -1,5 +1,5 @@
 # Example
-'''
+```java
 import java.awt.Color;
 adsfasdf
 public class MainTest implements GraphicsInterface {
@@ -20,5 +20,5 @@ public class MainTest implements GraphicsInterface {
 	}
 	
 }
-'''
+```
 
