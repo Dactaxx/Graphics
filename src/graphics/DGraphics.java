@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,7 +14,6 @@ public class DGraphics implements Runnable {
 	private DGraphics g;
 	public Graphics2D g2d;
 	private GraphicsInterface gi;
-	private Color color = new Color(0, 0, 0);
 	public JFrame frame = new JFrame();
 	public int width, height, nativeWidth, nativeHeight;
 	public double scale;
