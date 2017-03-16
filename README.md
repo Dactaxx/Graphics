@@ -1,4 +1,4 @@
-#Using the Graphics Engine
+# Using the Graphics Engine
 	Add the included jar to your projects workspace. This allows you to use DGraphics and GraphicsInterface. DGraphics handles all graphics directly using Java's built in Graphics2D. It creates a fullscreen window with a 16:9 aspect ratio and adds black bars accordingly. All objects are rendered on a 1920x1080 surface and then scaled to your monitor's resolution. DGraphics calls the render() method in GraphicsInterface at about 60 hertz.
 
 ## Example
