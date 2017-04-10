@@ -11,9 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class DGraphics implements Runnable {
-	public Graphics2D g2d;
 	private GraphicsInterface gi;
-	public JFrame frame = new JFrame();
+	private JFrame frame = new JFrame();
 	public int width, height, nativeWidth, nativeHeight;
 	public double scale;
 	
@@ -23,7 +22,7 @@ public class DGraphics implements Runnable {
 		
 	}
 	
-	public void createWindow() {
+	private void createWindow() {
 		nativeWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
 		nativeHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
@@ -64,7 +63,8 @@ public class DGraphics implements Runnable {
 	
 	public void run() {
 		while(true) {
-			frame.repaint();		
+			tick();
+			render();
 			try {
 				Thread.sleep(16);
 				
@@ -76,21 +76,20 @@ public class DGraphics implements Runnable {
 	
 	private class Panel extends JPanel {
 		public void paintComponent(Graphics g) {
-			g2d = (Graphics2D)g;
-			g2d.setColor(new Color(0, 0, 0));
-			tick();
-			render();
+			Graphics2D g2d = (Graphics2D)g;
+			gi.render(g2d);
 			
 		}
 		
 	}
 	
 	public void render() {
-		gi.render(this.g2d);
+		frame.repaint();
 		
 	}
 	
 	public void tick() {
+		gi.tick();
 		
 	}
 	
