@@ -6,18 +6,34 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class DGraphics implements Runnable {
 	private GraphicsInterface gi;
+	private ArrayList<GraphicsInterface> gis;
+	
 	private JFrame frame = new JFrame();
 	public int width, height, nativeWidth, nativeHeight;
 	public double scale;
 	
+	private int mode;
+	
+	private static final int SINGLE = 0;
+	private static final int MULTI = 1;
+	
 	public DGraphics(GraphicsInterface gi) {
 		this.gi = gi;
+		this.mode = SINGLE;
+		this.createWindow();
+		
+	}
+	
+	public DGraphics(ArrayList<GraphicsInterface> gis) {
+		this.gis = gis;
+		this.mode = MULTI;
 		this.createWindow();
 		
 	}
@@ -46,8 +62,15 @@ public class DGraphics implements Runnable {
 		frame.setUndecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Panel panel = new Panel();
-		frame.add(panel);
+		if(mode == SINGLE) {
+			Panel panel = new Panel();
+			frame.add(panel);
+		} else if(mode == MULTI) {
+			PanelMulti panel = new PanelMulti();
+			frame.add(panel);
+		}
+		
+		
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		gd.setFullScreenWindow(frame);
 		frame.setVisible(true);
@@ -57,7 +80,33 @@ public class DGraphics implements Runnable {
 	}
 	
 	private synchronized void start() {
-		new Thread(this).start();
+		if(mode == SINGLE) new Thread(this).start();
+		else	 if(mode == MULTI) {
+			for(GraphicsInterface gi : gis) {
+				Runnable runnable = new Runnable() {
+
+					@Override
+					public void run() {
+						while(true) {
+							gi.tick();
+							render();
+							try {
+								Thread.sleep(16);
+								
+							} catch(InterruptedException e) {
+								
+							}
+							
+						}
+						
+					}
+					
+				};
+				runnable.run();
+				
+			}
+			
+		}
 		
 	}
 	
@@ -81,6 +130,15 @@ public class DGraphics implements Runnable {
 			
 		}
 		
+	}
+	
+	private class PanelMulti extends JPanel {
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			for(GraphicsInterface gi : gis) {
+				gi.render(g2d);
+			}
+		}
 	}
 	
 	public void render() {
