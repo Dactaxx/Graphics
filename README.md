@@ -7,12 +7,14 @@ import graphics.DGraphics;
 import graphics.GraphicsInterface;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class GraphicsTest implements GraphicsInterface {
-	public static DGraphics g = new DGraphics(new GraphicsTest());
+	public static DGraphics g;
 	public static int  a = 0;
 	public static void main(String[] args) {
-
+		g = new DGraphics(new GraphicsTest());
+		
 	}
 
 	@Override
@@ -37,8 +39,6 @@ This graphics library has simple multithreading support. Simply declare a `Graph
 
 ## Example
 ```java
-package graphicstest;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
