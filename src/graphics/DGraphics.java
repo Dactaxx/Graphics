@@ -1,11 +1,12 @@
 package graphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -23,6 +24,7 @@ public class DGraphics implements Runnable {
 	
 	private static final int SINGLE = 0;
 	private static final int MULTI = 1;
+	private boolean restart = false;
 	
 	public DGraphics(GraphicsInterface gi) {
 		this.gi = gi;
@@ -75,7 +77,20 @@ public class DGraphics implements Runnable {
 		gd.setFullScreenWindow(frame);
 		frame.setVisible(true);
 
-		start();
+		new Thread(() -> {
+			start();
+		}).start();
+
+	}
+	
+	public void update(ArrayList<GraphicsInterface> gis) {
+		restart = true;
+		this.gis = gis;
+		restart = false;
+		
+		new Thread(() -> {
+			start();
+		}).start();
 		
 	}
 	
@@ -83,13 +98,35 @@ public class DGraphics implements Runnable {
 		if(mode == SINGLE) new Thread(this).start();
 		else	 if(mode == MULTI) {
 			for(GraphicsInterface gi : gis) {
+
+				
+
+				
 				Runnable runnable = new Runnable() {
 
 					@Override
 					public void run() {
-						while(true) {
-							gi.tick();
-							render();
+						int runState = -1;
+						Method getRunState;
+
+						boolean running = true;
+						while(running && !restart) {
+							try {
+								getRunState = gi.getClass().getMethod("getRunState");
+								runState = (int)getRunState.invoke(gi);
+							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+								e.printStackTrace();
+								
+							}
+							
+							if(runState == GraphicsThread.STOPPED) running = false;
+							else if(runState == GraphicsThread.PAUSED);
+							else if(runState == GraphicsThread.RUNNING) {
+								gi.tick();
+								render();
+								
+							}
+							
 							try {
 								Thread.sleep(16);
 								
