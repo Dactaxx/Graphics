@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -102,10 +104,7 @@ public class DGraphics implements Runnable {
 				
 
 				
-				Runnable runnable = new Runnable() {
-
-					@Override
-					public void run() {
+					new Thread(() -> {
 						int runState = -1;
 						Method getRunState;
 
@@ -121,7 +120,7 @@ public class DGraphics implements Runnable {
 							
 							if(runState == GraphicsThread.STOPPED) running = false;
 							else if(runState == GraphicsThread.PAUSED);
-							else if(runState == GraphicsThread.RUNNING) {
+							else if(runState == GraphicsThread.RUNNING || runState == -1) {
 								gi.tick();
 								render();
 								
@@ -136,10 +135,7 @@ public class DGraphics implements Runnable {
 							
 						}
 						
-					}
-					
-				};
-				runnable.run();
+					}).start();
 				
 			}
 			
@@ -185,6 +181,16 @@ public class DGraphics implements Runnable {
 	
 	public void tick() {
 		gi.tick();
+		
+	}
+	
+	public void addListener(KeyListener listener) {
+		frame.addKeyListener(listener);
+		
+	}
+	
+	public void addListener(MouseListener listener) {
+		frame.addMouseListener(listener);
 		
 	}
 	
