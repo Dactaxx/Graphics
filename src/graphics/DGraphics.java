@@ -18,7 +18,7 @@ public class DGraphics implements Runnable {
 	private GraphicsInterface gi;
 	private ArrayList<GraphicsInterface> gis;
 	
-	private JFrame frame = new JFrame();
+	public JFrame frame = new JFrame();
 	public int width, height, nativeWidth, nativeHeight;
 	public double scale;
 	
@@ -181,16 +181,6 @@ public class DGraphics implements Runnable {
 	
 	public void tick() {
 		gi.tick();
-		
-	}
-	
-	public void addListener(KeyListener listener) {
-		frame.addKeyListener(listener);
-		
-	}
-	
-	public void addListener(MouseListener listener) {
-		frame.addMouseListener(listener);
 		
 	}
 	
