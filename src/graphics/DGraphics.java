@@ -100,10 +100,6 @@ public class DGraphics implements Runnable {
 		if(mode == SINGLE) new Thread(this).start();
 		else	 if(mode == MULTI) {
 			for(GraphicsInterface gi : gis) {
-
-				
-
-				
 					new Thread(() -> {
 						int runState = -1;
 						Method getRunState;
@@ -114,7 +110,6 @@ public class DGraphics implements Runnable {
 								getRunState = gi.getClass().getMethod("getRunState");
 								runState = (int)getRunState.invoke(gi);
 							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-								e.printStackTrace();
 								
 							}
 							
