@@ -5,12 +5,14 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -26,6 +28,7 @@ public class DGraphics implements Runnable {
 	
 	private static final int SINGLE = 0;
 	private static final int MULTI = 1;
+	private static final int RECORD = 2;
 	private boolean restart = false;
 	
 	public DGraphics(GraphicsInterface gi) {
@@ -40,6 +43,12 @@ public class DGraphics implements Runnable {
 		this.mode = MULTI;
 		this.createWindow();
 		
+	}
+	
+	public DGraphics(ArrayList<GraphicsInterface> gis, int frames, String path, int width, int height) throws IOException {
+		this.gis = gis;
+		this.mode = RECORD;
+		this.startFrameEngine(frames, path, width, height);
 	}
 	
 	private void createWindow() {
@@ -72,6 +81,8 @@ public class DGraphics implements Runnable {
 		} else if(mode == MULTI) {
 			PanelMulti panel = new PanelMulti();
 			frame.add(panel);
+		} else if(mode == RECORD) {
+			
 		}
 		
 		
@@ -85,14 +96,24 @@ public class DGraphics implements Runnable {
 
 	}
 	
+	public void startFrameEngine(int frames, String path, int width, int height) throws IOException {
+		for(int i = 0; i < frames; i++) {
+			BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			for(GraphicsInterface gi : gis) {
+				gi.tick();
+				gi.render(bi.createGraphics());
+			}
+			ImageIO.write(bi, "png", new File(path + Integer.toString(i) + ".png"));
+			
+		}
+	}
+	
 	public void update(ArrayList<GraphicsInterface> gis) {
 		restart = true;
 		this.gis = gis;
 		restart = false;
 		
-		new Thread(() -> {
 			start();
-		}).start();
 		
 	}
 	
